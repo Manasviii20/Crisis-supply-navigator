@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supplies - Crisis Supply Navigator</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="index.html">🚨 Crisis Supply Navigator</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="dashboard.html">📊 Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link active" href="supplies.html">📦 Supplies</a></li>
+          <li class="nav-item"><a class="nav-link" href="shelters.html">🏠 Shelters</a></li>
+          <li class="nav-item"><a class="nav-link" href="deliveries.html">🚚 Deliveries</a></li>
+          <li class="nav-item"><a class="nav-link" href="map.html">🗺️ Map</a></li>
+          <li class="nav-item"><a class="nav-link" href="admin.html">⚙️ Admin</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Supplies Content -->
+  <div class="container mt-5">
+    <h2 class="fw-bold mb-4">📦 Supply Management</h2>
+    
+    <!-- Add Supply Button -->
+    <div class="mb-4">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplyModal">
+        ➕ Add New Supply
+      </button>
+    </div>
+
+    <!-- Supply Stats -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm border-primary">
+          <div class="card-body text-center">
+            <h5 class="card-title">Food & Water</h5>
+            <h3 class="text-primary">300</h3>
+            <p class="text-muted">Units</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-success">
+          <div class="card-body text-center">
+            <h5 class="card-title">Clothing</h5>
+            <h3 class="text-success">150</h3>
+            <p class="text-muted">Units</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-danger">
+          <div class="card-body text-center">
+            <h5 class="card-title">Medicine</h5>
+            <h3 class="text-danger">100</h3>
+            <p class="text-muted">Units</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supplies Table -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Current Inventory</h5>
+      </div>
+      <div class="card-body">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Type</th>
+              <th>Category</th>
+              <th>Quantity</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#S001</td>
+              <td>Food Packets</td>
+              <td>Food</td>
+              <td>200</td>
+              <td>Warehouse A</td>
+              <td><span class="badge bg-success">Available</span></td>
+              <td>
+                <button class="btn btn-sm btn-warning">Edit</button>
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>#S002</td>
+              <td>Bottled Water</td>
+              <td>Water</td>
+              <td>500</td>
+              <td>Warehouse B</td>
+              <td><span class="badge bg-success">Available</span></td>
+              <td>
+                <button class="btn btn-sm btn-warning">Edit</button>
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>#S003</td>
+              <td>Blankets</td>
+              <td>Clothing</td>
+              <td>150</td>
+              <td>Shelter A</td>
+              <td><span class="badge bg-warning">Low Stock</span></td>
+              <td>
+                <button class="btn btn-sm btn-warning">Edit</button>
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>#S004</td>
+              <td>First Aid Kits</td>
+              <td>Medicine</td>
+              <td>100</td>
+              <td>Hospital B</td>
+              <td><span class="badge bg-success">Available</span></td>
+              <td>
+                <button class="btn btn-sm btn-warning">Edit</button>
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>#S005</td>
+              <td>Canned Goods</td>
+              <td>Food</td>
+              <td>100</td>
+              <td>Warehouse A</td>
+              <td><span class="badge bg-info">In Transit</span></td>
+              <td>
+                <button class="btn btn-sm btn-warning">Edit</button>
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Supply Modal -->
+  <div class="modal fade" id="addSupplyModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Add New Supply</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label class="form-label">Supply Type</label>
+              <input type="text" class="form-control" placeholder="e.g., Food Packets">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Category</label>
+              <select class="form-select">
+                <option>Food</option>
+                <option>Water</option>
+                <option>Clothing</option>
+                <option>Medicine</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Quantity</label>
+              <input type="number" class="form-control" placeholder="Enter quantity">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Storage Location</label>
+              <input type="text" class="form-control" placeholder="e.g., Warehouse A">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Add Supply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

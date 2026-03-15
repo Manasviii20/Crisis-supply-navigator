@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Crisis Supply Navigator</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="index.html">🚨 Crisis Supply Navigator</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="dashboard.html">📊 Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="supplies.html">📦 Supplies</a></li>
+          <li class="nav-item"><a class="nav-link" href="shelters.html">🏠 Shelters</a></li>
+          <li class="nav-item"><a class="nav-link" href="deliveries.html">🚚 Deliveries</a></li>
+          <li class="nav-item"><a class="nav-link" href="map.html">🗺️ Map</a></li>
+          <li class="nav-item"><a class="nav-link" href="admin.html">⚙️ Admin</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Content -->
+  <div class="container mt-5">
+    <h2 class="fw-bold mb-4">📊 Relief Dashboard</h2>
+    
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-3">
+        <div class="card shadow-sm border-primary">
+          <div class="card-body text-center">
+            <h5 class="card-title">Total Supplies</h5>
+            <h2 class="display-6 text-primary">550</h2>
+            <p class="text-muted">Units Available</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-success">
+          <div class="card-body text-center">
+            <h5 class="card-title">Active Shelters</h5>
+            <h2 class="display-6 text-success">12</h2>
+            <p class="text-muted">Operating Now</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-warning">
+          <div class="card-body text-center">
+            <h5 class="card-title">Deliveries Today</h5>
+            <h2 class="display-6 text-warning">28</h2>
+            <p class="text-muted">Completed: 24</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-danger">
+          <div class="card-body text-center">
+            <h5 class="card-title">Emergency Alerts</h5>
+            <h2 class="display-6 text-danger">3</h2>
+            <p class="text-muted">Requires Attention</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Supply Distribution</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="suppliesChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Shelter Occupancy</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="shelterChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Recent Activity</h5>
+          </div>
+          <div class="card-body">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Activity</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>10:30 AM</td>
+                  <td>Food supplies delivered to Shelter A</td>
+                  <td><span class="badge bg-success">Completed</span></td>
+                </tr>
+                <tr>
+                  <td>11:15 AM</td>
+                  <td>Medical supplies restocked at Hospital B</td>
+                  <td><span class="badge bg-success">Completed</span></td>
+                </tr>
+                <tr>
+                  <td>12:00 PM</td>
+                  <td>Clothing distribution at Community Center</td>
+                  <td><span class="badge bg-warning">In Progress</span></td>
+                </tr>
+                <tr>
+                  <td>01:30 PM</td>
+                  <td>Emergency response team deployed</td>
+                  <td><span class="badge bg-info">Active</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
