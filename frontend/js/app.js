@@ -1,309 +1,579 @@
-// Crisis Supply Navigator - Main JavaScript
+let suppliesChartInstance;
+let shelterChartInstance;
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Crisis Supply Navigator initialized!');
-    
-    // Initialize charts if on dashboard page
-    if (document.getElementById('suppliesChart')) {
-        initSuppliesChart();
-    }
-    if (document.getElementById('shelterChart')) {
-        initShelterChart();
-    }
-    
-    // Initialize map if on map page
-    if (document.getElementById('map')) {
-        initMap();
-    }
+document.addEventListener("DOMContentLoaded", () => {
+  const page = window.location.pathname.split("/").pop() || "index.html";
+
+  if (page === "dashboard.html") loadDashboardPage();
+  if (page === "supplies.html") loadSuppliesPage();
+  if (page === "shelters.html") loadSheltersPage();
+  if (page === "deliveries.html") loadDeliveriesPage();
+  if (page === "map.html") loadMapPage();
+  if (page === "admin.html") loadAdminPage();
 });
 
-// Chart.js - Supplies Distribution Chart
-function initSuppliesChart() {
-    const suppliesCtx = document.getElementById('suppliesChart');
-    if (!suppliesCtx) return;
-    
-    new Chart(suppliesCtx, {
-        type: 'pie',
-        data: {
-            labels: ['Food', 'Clothes', 'Medicine', 'Water', 'Other'],
-            datasets: [{
-                data: [300, 150, 100, 200, 50],
-                backgroundColor: [
-                    '#007bff',
-                    '#28a745',
-                    '#dc3545',
-                    '#17a2b8',
-                    '#ffc107'
-                ],
-                borderWidth: 2,
-                borderColor: '#fff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    display: true
-                }
-            }
-        }
-    });
+async function apiRequest(url, options = {}) {
+  const response = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+    ...options,
+  });
+
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.error || "Request failed");
+  }
+
+  return response.json();
 }
 
-// Chart.js - Shelter Occupancy Chart
-function initShelterChart() {
-    const shelterCtx = document.getElementById('shelterChart');
-    if (!shelterCtx) return;
-    
-    new Chart(shelterCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Shelter A', 'Shelter B', 'Shelter C', 'Shelter D', 'Shelter E', 'Shelter F'],
-            datasets: [{
-                label: 'Occupancy',
-                data: [80, 120, 40, 195, 350, 105],
-                backgroundColor: [
-                    '#28a745',
-                    '#ffc107',
-                    '#007bff',
-                    '#dc3545',
-                    '#17a2b8',
-                    '#6c757d'
-                ],
-                borderWidth: 2,
-                borderColor: '#fff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 200,
-                    ticks: {
-                        stepSize: 20
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
-        }
-    });
+function setText(id, value) {
+  const element = document.getElementById(id);
+  if (element) element.textContent = value;
 }
 
-// Leaflet Map Initialization
-function initMap() {
-    // Check if Leaflet is loaded
-    if (typeof L === 'undefined') {
-        console.error('Leaflet library not loaded!');
-        return;
-    }
-    
-    // Default coordinates (example: Chennai, India - you can change this)
-    const defaultLat = 12.82;
-    const defaultLng = 80.04;
-    const defaultZoom = 10;
-    
-    // Create map
-    const map = L.map('map').setView([defaultLat, defaultLng], defaultZoom);
-    
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18
-    }).addTo(map);
-    
-    // Sample shelter markers
-    const shelters = [
-        {
-            name: 'Shelter A - Community Center',
-            lat: 12.82,
-            lng: 80.04,
-            capacity: 100,
-            occupied: 80,
-            status: 'Accepting'
-        },
-        {
-            name: 'Shelter B - School Gymnasium',
-            lat: 12.85,
-            lng: 80.07,
-            capacity: 150,
-            occupied: 120,
-            status: 'Limited Space'
-        },
-        {
-            name: 'Shelter C - Church Hall',
-            lat: 12.79,
-            lng: 80.02,
-            capacity: 80,
-            occupied: 40,
-            status: 'Accepting'
-        },
-        {
-            name: 'Hospital B - Medical Center',
-            lat: 12.83,
-            lng: 80.06,
-            capacity: 200,
-            occupied: 150,
-            status: 'Emergency Available'
-        },
-        {
-            name: 'Supply Center C - Warehouse',
-            lat: 12.81,
-            lng: 80.03,
-            type: 'supply'
-        }
-    ];
-    
-    // Add markers to map
-    shelters.forEach(shelter => {
-        let markerColor = 'green';
-        if (shelter.status === 'Full' || shelter.occupied / shelter.capacity > 0.95) {
-            markerColor = 'red';
-        } else if (shelter.status === 'Limited Space' || shelter.occupied / shelter.capacity > 0.75) {
-            markerColor = 'orange';
-        }
-        
-        const popupContent = `
-            <div style="min-width: 200px;">
-                <h6 style="margin-bottom: 5px;"><strong>${shelter.name}</strong></h6>
-                ${shelter.capacity ? `<p>Capacity: ${shelter.capacity} people</p>` : ''}
-                ${shelter.occupied ? `<p>Occupied: ${shelter.occupied} people</p>` : ''}
-                ${shelter.status ? `<p>Status: <span style="color: ${markerColor}; font-weight: bold;">${shelter.status}</span></p>` : ''}
-                ${shelter.type === 'supply' ? '<p>Type: Supply Distribution Center</p>' : ''}
-            </div>
-        `;
-        
-        L.marker([shelter.lat, shelter.lng])
-            .addTo(map)
-            .bindPopup(popupContent)
-            .openPopup();
-    });
-    
-    // Add a circle for safe zones
-    L.circle([defaultLat, defaultLng], {
-        color: 'blue',
-        fillColor: '#007bff',
-        fillOpacity: 0.1,
-        radius: 5000
-    }).addTo(map).bindPopup('Safe Zone Area');
-    
-    console.log('Map initialized successfully!');
+function showMessage(id, message, tone = "success") {
+  const element = document.getElementById(id);
+  if (element) element.innerHTML = `<div class="alert alert-${tone}">${escapeHtml(message)}</div>`;
 }
 
-// Utility Functions
-function formatNumber(num) {
-    return num.toLocaleString();
+function clearMessage(id) {
+  const element = document.getElementById(id);
+  if (element) element.innerHTML = "";
 }
 
-function getStatusBadge(status) {
-    const badges = {
-        'Available': 'bg-success',
-        'Low Stock': 'bg-warning',
-        'In Transit': 'bg-info',
-        'Completed': 'bg-success',
-        'In Progress': 'bg-warning',
-        'Active': 'bg-info',
-        'Full': 'bg-danger',
-        'Accepting': 'bg-success',
-        'Limited Space': 'bg-warning'
-    };
-    return badges[status] || 'bg-secondary';
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
-// Fetch API wrapper (for future backend integration)
-async function fetchData(endpoint) {
+function badgeClass(status) {
+  const map = {
+    Available: "bg-success",
+    "Low Stock": "bg-warning text-dark",
+    "In Transit": "bg-primary",
+    Delivered: "bg-success",
+    Completed: "bg-success",
+    Scheduled: "bg-primary",
+    Delayed: "bg-warning text-dark",
+    Accepting: "bg-success",
+    "Limited Space": "bg-warning text-dark",
+    Full: "bg-dark",
+    Success: "bg-success",
+    Info: "bg-primary",
+    "Emergency Available": "bg-dark",
+    "Food & Water": "bg-primary",
+  };
+  return map[status] || "bg-secondary";
+}
+
+function formatNumber(value) {
+  return Number(value || 0).toLocaleString();
+}
+
+function formatTimestamp(timestamp) {
+  return new Date(timestamp).toLocaleString("en-IN", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+async function loadDashboardPage() {
+  try {
+    clearMessage("dashboardMessage");
+    const data = await apiRequest("/api/dashboard");
+    setText("totalSuppliesValue", formatNumber(data.summary.totalSupplies));
+    setText("activeSheltersValue", formatNumber(data.summary.activeShelters));
+    setText("deliveriesTodayValue", formatNumber(data.summary.deliveriesToday));
+    setText("deliveriesCompletedText", `Completed ${formatNumber(data.summary.completedDeliveries)}`);
+    setText("alertsValue", formatNumber(data.summary.activeAlerts));
+    renderDashboardActivity(data.recentActivity);
+    renderSuppliesChart(data.summary.categoryTotals);
+    renderShelterChart(data.shelters);
+  } catch (error) {
+    showMessage("dashboardMessage", error.message, "danger");
+  }
+}
+
+function renderDashboardActivity(items) {
+  const container = document.getElementById("dashboardActivityBody");
+  if (!container) return;
+
+  container.innerHTML = items
+    .map(
+      (item) => `
+        <tr>
+          <td>${escapeHtml(formatTimestamp(item.timestamp))}</td>
+          <td>${escapeHtml(item.action)}${item.resource ? ` - ${escapeHtml(item.resource)}` : ""}</td>
+          <td><span class="badge ${badgeClass(item.status)}">${escapeHtml(item.status)}</span></td>
+        </tr>
+      `
+    )
+    .join("");
+}
+
+function renderSuppliesChart(categoryTotals) {
+  const canvas = document.getElementById("suppliesChart");
+  if (!canvas || typeof Chart === "undefined") return;
+
+  suppliesChartInstance?.destroy();
+  const labels = ["Food", "Water", "Clothing", "Medicine", "Other"];
+  const values = labels.map((label) => categoryTotals[label] || 0);
+
+  suppliesChartInstance = new Chart(canvas, {
+    type: "pie",
+    data: {
+      labels,
+      datasets: [
+        {
+          data: values,
+          backgroundColor: ["#213547", "#b6794f", "#d9c8b3", "#213547", "#8f9aa3"],
+          borderColor: "#fcfaf6",
+          borderWidth: 2,
+        },
+      ],
+    },
+    options: {
+      plugins: {
+        legend: {
+          position: "bottom",
+        },
+      },
+    },
+  });
+}
+
+function renderShelterChart(shelters) {
+  const canvas = document.getElementById("shelterChart");
+  if (!canvas || typeof Chart === "undefined") return;
+
+  shelterChartInstance?.destroy();
+  shelterChartInstance = new Chart(canvas, {
+    type: "bar",
+    data: {
+      labels: shelters.map((item) => item.name.replace("Shelter ", "S ")),
+      datasets: [
+        {
+          data: shelters.map((item) => item.occupied),
+          backgroundColor: shelters.map((item) => {
+            if (item.status === "Full") return "#213547";
+            if (item.status === "Limited Space") return "#d9c8b3";
+            return "#b6794f";
+          }),
+        },
+      ],
+    },
+    options: {
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+}
+
+async function loadSuppliesPage() {
+  try {
+    clearMessage("suppliesMessage");
+    const supplies = await apiRequest("/api/supplies");
+    renderSuppliesPage(supplies);
+    bindAddSupplyForm();
+  } catch (error) {
+    showMessage("suppliesMessage", error.message, "danger");
+  }
+}
+
+function renderSuppliesPage(supplies) {
+  const totals = supplies.reduce((accumulator, item) => {
+    accumulator[item.category] = (accumulator[item.category] || 0) + Number(item.quantity || 0);
+    return accumulator;
+  }, {});
+
+  setText("foodWaterUnits", formatNumber((totals.Food || 0) + (totals.Water || 0)));
+  setText("clothingUnits", formatNumber(totals.Clothing || 0));
+  setText("medicineUnits", formatNumber(totals.Medicine || 0));
+
+  const body = document.getElementById("suppliesTableBody");
+  if (!body) return;
+
+  body.innerHTML = supplies
+    .map(
+      (item) => `
+        <tr>
+          <td>#${escapeHtml(item.id)}</td>
+          <td>${escapeHtml(item.type)}</td>
+          <td>${escapeHtml(item.category)}</td>
+          <td>${formatNumber(item.quantity)}</td>
+          <td>${escapeHtml(item.location)}</td>
+          <td><span class="badge ${badgeClass(item.status)}">${escapeHtml(item.status)}</span></td>
+          <td><span class="table-note">Live</span></td>
+        </tr>
+      `
+    )
+    .join("");
+}
+
+function bindAddSupplyForm() {
+  const form = document.getElementById("addSupplyForm");
+  if (!form || form.dataset.bound === "true") return;
+
+  form.dataset.bound = "true";
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearMessage("supplyFormMessage");
+
     try {
-        const response = await fetch(`/api/${endpoint}`);
-        if (!response.ok) throw new Error('Network response was not ok');
-        return await response.json();
+      await apiRequest("/api/supplies", {
+        method: "POST",
+        body: JSON.stringify({
+          type: form.type.value,
+          category: form.category.value,
+          quantity: Number(form.quantity.value),
+          location: form.location.value,
+          status: form.status.value,
+        }),
+      });
+
+      form.reset();
+      closeModal("addSupplyModal");
+      showMessage("suppliesMessage", "Supply added successfully.");
+      loadSuppliesPage();
     } catch (error) {
-        console.error('Error fetching data:', error);
-        return null;
+      showMessage("supplyFormMessage", error.message, "danger");
     }
+  });
 }
 
-// Example: Load supplies from API (when backend is ready)
-async function loadSupplies() {
-    const supplies = await fetchData('supplies');
-    if (supplies) {
-        console.log('Loaded supplies:', supplies);
-        // Update UI with supplies data
+async function loadSheltersPage() {
+  try {
+    clearMessage("sheltersMessage");
+    const shelters = await apiRequest("/api/shelters");
+    const totalCapacity = shelters.reduce((sum, item) => sum + Number(item.capacity || 0), 0);
+    const occupied = shelters.reduce((sum, item) => sum + Number(item.occupied || 0), 0);
+
+    setText("totalSheltersCount", formatNumber(shelters.length));
+    setText("totalCapacityCount", formatNumber(totalCapacity));
+    setText("currentOccupancyCount", formatNumber(occupied));
+    setText("occupancyRateText", `${totalCapacity ? Math.round((occupied / totalCapacity) * 100) : 0}% occupied`);
+    setText("availableBedsCount", formatNumber(Math.max(totalCapacity - occupied, 0)));
+
+    const grid = document.getElementById("sheltersGrid");
+    if (!grid) return;
+
+    grid.innerHTML = shelters
+      .map((item) => {
+        const percent = item.capacity ? Math.round((item.occupied / item.capacity) * 100) : 0;
+        return `
+          <div class="col-md-6 col-lg-4">
+            <article class="card shelter-card h-100">
+              <div class="card-body">
+                <p class="eyebrow">${escapeHtml(item.locationType)}</p>
+                <h3 class="section-card-title">${escapeHtml(item.name)}</h3>
+                <p class="muted-copy">${escapeHtml(item.address)}</p>
+                <div class="progress stat-progress mb-3">
+                  <div class="progress-bar" role="progressbar" style="width: ${percent}%">${percent}%</div>
+                </div>
+                <p><strong>Capacity:</strong> ${formatNumber(item.capacity)}</p>
+                <p><strong>Occupied:</strong> ${formatNumber(item.occupied)}</p>
+                <p><strong>Contact:</strong> ${escapeHtml(item.contact)}</p>
+                <p><strong>Status:</strong> <span class="badge ${badgeClass(item.status)}">${escapeHtml(item.status)}</span></p>
+              </div>
+            </article>
+          </div>
+        `;
+      })
+      .join("");
+  } catch (error) {
+    showMessage("sheltersMessage", error.message, "danger");
+  }
+}
+
+async function loadDeliveriesPage() {
+  try {
+    clearMessage("deliveriesMessage");
+    const deliveries = await apiRequest("/api/deliveries");
+    const completed = deliveries.filter((item) => ["Delivered", "Completed"].includes(item.status));
+    const transit = deliveries.filter((item) => item.status === "In Transit");
+    const delayed = deliveries.filter((item) => item.status === "Delayed");
+
+    setText("deliveriesScheduledCount", formatNumber(deliveries.length));
+    setText("deliveriesCompletedCount", formatNumber(completed.length));
+    setText("deliveriesTransitCount", formatNumber(transit.length));
+    setText("deliveriesDelayedCount", formatNumber(delayed.length));
+
+    renderDeliveryRows("activeDeliveriesBody", transit, false);
+    renderDeliveryRows("completedDeliveriesBody", [...completed, ...delayed], true);
+    bindDeliveryForm();
+  } catch (error) {
+    showMessage("deliveriesMessage", error.message, "danger");
+  }
+}
+
+function renderDeliveryRows(targetId, items, completedView) {
+  const body = document.getElementById(targetId);
+  if (!body) return;
+
+  body.innerHTML = items
+    .map(
+      (item) => `
+        <tr>
+          <td>#${escapeHtml(item.id)}</td>
+          <td>${escapeHtml(item.driver)}</td>
+          <td>${escapeHtml(item.destination)}</td>
+          <td>${escapeHtml(item.cargoType)} (${formatNumber(item.quantity)} units)</td>
+          <td>${escapeHtml(completedView ? item.deliveredAt || item.eta : item.eta)}</td>
+          <td><span class="badge ${badgeClass(item.status)}">${escapeHtml(item.status)}</span></td>
+          ${completedView ? "" : "<td><span class='table-note'>Tracking on</span></td>"}
+        </tr>
+      `
+    )
+    .join("");
+}
+
+function bindDeliveryForm() {
+  const form = document.getElementById("scheduleDeliveryForm");
+  if (!form || form.dataset.bound === "true") return;
+
+  form.dataset.bound = "true";
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearMessage("deliveryFormMessage");
+
+    const etaValue = form.eta.value ? new Date(form.eta.value).toLocaleString("en-IN") : "Pending";
+
+    try {
+      await apiRequest("/api/deliveries", {
+        method: "POST",
+        body: JSON.stringify({
+          pickup: form.pickup.value,
+          destination: form.destination.value,
+          driver: form.driver.value,
+          contact: form.contact.value,
+          cargoType: form.cargoType.value,
+          quantity: Number(form.quantity.value),
+          eta: etaValue,
+          status: "Scheduled",
+        }),
+      });
+
+      form.reset();
+      closeModal("scheduleDeliveryModal");
+      showMessage("deliveriesMessage", "Delivery scheduled successfully.");
+      loadDeliveriesPage();
+    } catch (error) {
+      showMessage("deliveryFormMessage", error.message, "danger");
     }
+  });
 }
 
-// Example: Load shelters from API (when backend is ready)
-async function loadShelters() {
-    const shelters = await fetchData('shelters');
-    if (shelters) {
-        console.log('Loaded shelters:', shelters);
-        // Update UI with shelters data
+async function loadMapPage() {
+  try {
+    clearMessage("mapMessage");
+    const data = await apiRequest("/api/map");
+    renderNearbyLocations(data.locations);
+    renderMap(data);
+  } catch (error) {
+    showMessage("mapMessage", error.message, "danger");
+  }
+}
+
+function renderNearbyLocations(items) {
+  const list = document.getElementById("nearbyLocationsList");
+  if (!list) return;
+
+  list.innerHTML = items
+    .sort((left, right) => Number(left.distanceKm || 99) - Number(right.distanceKm || 99))
+    .slice(0, 5)
+    .map(
+      (item) => `
+        <div class="list-group-item">
+          <strong>${escapeHtml(item.name)}</strong><br>
+          <small class="text-muted">${escapeHtml(item.address || "Response point")} - ${escapeHtml(
+            item.distanceKm ? `${item.distanceKm} km` : "Pending"
+          )}</small><br>
+          <span class="badge ${badgeClass(item.status || item.type)}">${escapeHtml(item.status || item.type)}</span>
+        </div>
+      `
+    )
+    .join("");
+}
+
+function renderMap(data) {
+  const mapRoot = document.getElementById("map");
+  if (!mapRoot || typeof L === "undefined" || mapRoot.dataset.initialized === "true") return;
+
+  mapRoot.dataset.initialized = "true";
+  const map = L.map("map").setView([data.center.lat, data.center.lng], data.center.zoom || 10);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 18,
+  }).addTo(map);
+
+  data.locations.forEach((item) => {
+    const popup = `
+      <div>
+        <strong>${escapeHtml(item.name)}</strong><br>
+        <span>${escapeHtml(item.address || "Operational location")}</span><br>
+        <span>Status: ${escapeHtml(item.status || item.type)}</span>
+      </div>
+    `;
+
+    L.marker([item.lat, item.lng]).addTo(map).bindPopup(popup);
+  });
+}
+
+async function loadAdminPage() {
+  try {
+    clearMessage("adminMessage");
+    const data = await apiRequest("/api/admin");
+    renderAdminSummary(data.summary);
+    renderAdminLogs(data.activity);
+    populateSupplySelect(data.supplies);
+    populateLocationSelect(data.supplies);
+    bindInventoryForm();
+    bindShelterForm();
+  } catch (error) {
+    showMessage("adminMessage", error.message, "danger");
+  }
+}
+
+function renderAdminSummary(summary) {
+  setText("adminTotalUsers", formatNumber(summary.users));
+  setText("adminShelterSummary", `${formatNumber(summary.activeShelters)} / ${formatNumber(summary.shelterLimit)}`);
+  setText("adminSupplyCapacity", `${formatNumber(summary.totalSupplies)} units`);
+  setText("adminSystemHealth", summary.systemHealth);
+
+  const shelterProgress = document.getElementById("adminShelterProgressBar");
+  const supplyProgress = document.getElementById("adminSupplyProgressBar");
+  const healthProgress = document.getElementById("adminHealthProgressBar");
+
+  if (shelterProgress) shelterProgress.style.width = `${Math.round((summary.activeShelters / summary.shelterLimit) * 100)}%`;
+  if (supplyProgress) supplyProgress.style.width = `${Math.min(summary.supplyCapacity, 100)}%`;
+  if (healthProgress) healthProgress.style.width = "95%";
+}
+
+function renderAdminLogs(items) {
+  const body = document.getElementById("adminLogsBody");
+  if (!body) return;
+
+  body.innerHTML = items
+    .map(
+      (item) => `
+        <tr>
+          <td>${escapeHtml(formatTimestamp(item.timestamp))}</td>
+          <td>${escapeHtml(item.user)}</td>
+          <td>${escapeHtml(item.action)}</td>
+          <td>${escapeHtml(item.resource)}</td>
+          <td><span class="badge ${badgeClass(item.status)}">${escapeHtml(item.status)}</span></td>
+        </tr>
+      `
+    )
+    .join("");
+}
+
+function populateSupplySelect(items) {
+  const select = document.getElementById("inventorySupplySelect");
+  if (!select) return;
+
+  select.innerHTML = items
+    .map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.type)}</option>`)
+    .join("");
+}
+
+function populateLocationSelect(items) {
+  const select = document.getElementById("inventoryLocationSelect");
+  if (!select) return;
+
+  const locations = [...new Set(items.map((item) => item.location))];
+  select.innerHTML = locations
+    .map((location) => `<option value="${escapeHtml(location)}">${escapeHtml(location)}</option>`)
+    .join("");
+}
+
+function bindInventoryForm() {
+  const form = document.getElementById("inventoryUpdateForm");
+  if (!form || form.dataset.bound === "true") return;
+
+  form.dataset.bound = "true";
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    try {
+      await apiRequest(`/api/supplies/${form.supplyId.value}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          quantity: Number(form.quantity.value),
+          location: form.location.value,
+        }),
+      });
+
+      showMessage("adminMessage", "Inventory updated successfully.");
+      loadAdminPage();
+    } catch (error) {
+      showMessage("adminMessage", error.message, "danger");
     }
+  });
 }
 
-// Chat functionality (from original script.js)
-function sendMessage() {
-    const input = document.getElementById("userInput");
-    if (!input) return;
-    
-    const message = input.value.toLowerCase();
+function bindShelterForm() {
+  const form = document.getElementById("addShelterForm");
+  if (!form || form.dataset.bound === "true") return;
 
-    if (message.trim() === "") return;
+  form.dataset.bound = "true";
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearMessage("shelterFormMessage");
 
-    addMessage(message, "user");
+    const facilities = Array.from(form.querySelectorAll('input[name="facilities"]:checked')).map(
+      (input) => input.value
+    );
 
-    let botReply = "";
+    try {
+      await apiRequest("/api/shelters", {
+        method: "POST",
+        body: JSON.stringify({
+          name: form.name.value,
+          locationType: form.locationType.value,
+          address: form.address.value,
+          capacity: Number(form.capacity.value),
+          contact: form.contact.value,
+          facilities,
+          lat: form.lat.value ? Number(form.lat.value) : undefined,
+          lng: form.lng.value ? Number(form.lng.value) : undefined,
+          status: "Accepting",
+          occupied: 0,
+        }),
+      });
 
-    if (message.includes("food") || message.includes("hungry") || message.includes("ration")) {
-        botReply = "🍚 Food assistance is available. Nearest relief centers are distributing meals.";
-    } 
-    else if (message.includes("room") || message.includes("shelter") || message.includes("stay")) {
-        botReply = "🏠 Temporary shelters are available. Please share your location.";
-    } 
-    else if (message.includes("medicine") || message.includes("fever") || message.includes("injury")) {
-        botReply = "💊 Medical help is on the way. Emergency health camps are active nearby.";
-    } 
-    else if (message.includes("flood") || message.includes("rain") || message.includes("cyclone")) {
-        botReply = "⚠️ Stay safe. Disaster response teams are monitoring the situation.";
-    } 
-    else {
-        botReply = "I'm here to help. Please describe your emergency clearly.";
+      form.reset();
+      closeModal("addShelterModal");
+      showMessage("adminMessage", "Shelter added successfully.");
+      loadAdminPage();
+    } catch (error) {
+      showMessage("shelterFormMessage", error.message, "danger");
     }
-
-    setTimeout(() => {
-        addMessage(botReply, "bot");
-    }, 500);
-
-    input.value = "";
+  });
 }
 
-function addMessage(text, sender) {
-    const chatbox = document.getElementById("chatbox");
-    if (!chatbox) return;
-    
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `message ${sender}`;
-    messageDiv.innerText = text;
-    chatbox.appendChild(messageDiv);
+function closeModal(id) {
+  if (!window.bootstrap) return;
+  const element = document.getElementById(id);
+  const instance = element ? window.bootstrap.Modal.getInstance(element) : null;
+  instance?.hide();
 }
-
-// Export functions for use in other scripts
-window.CrisisNavigator = {
-    initMap,
-    initSuppliesChart,
-    initShelterChart,
-    fetchData,
-    loadSupplies,
-    loadShelters,
-    sendMessage,
-    addMessage
-};
-
-console.log('✅ All systems ready! Crisis Supply Navigator is fully operational.');

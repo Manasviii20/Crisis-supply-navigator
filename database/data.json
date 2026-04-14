@@ -1,0 +1,329 @@
+{
+  "meta": {
+    "users": 245,
+    "shelterLimit": 15,
+    "systemHealth": "Excellent",
+    "mapCenter": {
+      "lat": 12.82,
+      "lng": 80.04,
+      "zoom": 10
+    }
+  },
+  "supplies": [
+    {
+      "id": "S001",
+      "type": "Food Packets",
+      "category": "Food",
+      "quantity": 200,
+      "location": "Warehouse A",
+      "status": "Available"
+    },
+    {
+      "id": "S002",
+      "type": "Bottled Water",
+      "category": "Water",
+      "quantity": 180,
+      "location": "Warehouse B",
+      "status": "Available"
+    },
+    {
+      "id": "S003",
+      "type": "Blankets",
+      "category": "Clothing",
+      "quantity": 150,
+      "location": "Shelter A",
+      "status": "Low Stock"
+    },
+    {
+      "id": "S004",
+      "type": "First Aid Kits",
+      "category": "Medicine",
+      "quantity": 100,
+      "location": "Hospital B",
+      "status": "Available"
+    },
+    {
+      "id": "S005",
+      "type": "Canned Goods",
+      "category": "Food",
+      "quantity": 70,
+      "location": "Warehouse A",
+      "status": "In Transit"
+    },
+    {
+      "id": "S006",
+      "type": "Hygiene Kits",
+      "category": "Other",
+      "quantity": 55,
+      "location": "Warehouse C",
+      "status": "Available"
+    }
+  ],
+  "shelters": [
+    {
+      "id": "SH001",
+      "name": "Shelter A - Community Center",
+      "locationType": "Community Center",
+      "address": "123 Main Street",
+      "capacity": 100,
+      "occupied": 80,
+      "contact": "+1-555-0101",
+      "status": "Accepting",
+      "facilities": [
+        "Food Service",
+        "Medical Support",
+        "Wheelchair Accessible"
+      ],
+      "lat": 12.82,
+      "lng": 80.04,
+      "distanceKm": 2.3
+    },
+    {
+      "id": "SH002",
+      "name": "Shelter B - School Gymnasium",
+      "locationType": "School",
+      "address": "456 Oak Avenue",
+      "capacity": 150,
+      "occupied": 120,
+      "contact": "+1-555-0102",
+      "status": "Limited Space",
+      "facilities": [
+        "Food Service",
+        "Pet Friendly"
+      ],
+      "lat": 12.85,
+      "lng": 80.07,
+      "distanceKm": 3.1
+    },
+    {
+      "id": "SH003",
+      "name": "Shelter C - Church Hall",
+      "locationType": "Church",
+      "address": "789 Pine Road",
+      "capacity": 80,
+      "occupied": 40,
+      "contact": "+1-555-0103",
+      "status": "Accepting",
+      "facilities": [
+        "Food Service",
+        "Wheelchair Accessible"
+      ],
+      "lat": 12.79,
+      "lng": 80.02,
+      "distanceKm": 2.7
+    },
+    {
+      "id": "SH004",
+      "name": "Shelter D - Sports Complex",
+      "locationType": "Sports Complex",
+      "address": "321 Elm Boulevard",
+      "capacity": 200,
+      "occupied": 195,
+      "contact": "+1-555-0104",
+      "status": "Full",
+      "facilities": [
+        "Medical Support"
+      ],
+      "lat": 12.8,
+      "lng": 80.09,
+      "distanceKm": 4.5
+    },
+    {
+      "id": "SH005",
+      "name": "Shelter E - Convention Center",
+      "locationType": "Convention Center",
+      "address": "555 Cedar Lane",
+      "capacity": 500,
+      "occupied": 350,
+      "contact": "+1-555-0105",
+      "status": "Accepting",
+      "facilities": [
+        "Food Service",
+        "Medical Support",
+        "Wheelchair Accessible"
+      ],
+      "lat": 12.81,
+      "lng": 80.01,
+      "distanceKm": 1.8
+    },
+    {
+      "id": "SH006",
+      "name": "Shelter F - Library Hall",
+      "locationType": "Library",
+      "address": "888 Maple Drive",
+      "capacity": 170,
+      "occupied": 105,
+      "contact": "+1-555-0106",
+      "status": "Accepting",
+      "facilities": [
+        "Food Service",
+        "Medical Support"
+      ],
+      "lat": 12.83,
+      "lng": 80.06,
+      "distanceKm": 2.9
+    }
+  ],
+  "deliveries": [
+    {
+      "id": "TRK001",
+      "pickup": "Warehouse A",
+      "destination": "Shelter A",
+      "driver": "John Smith",
+      "contact": "+1-555-1001",
+      "cargoType": "Food Supplies",
+      "quantity": 50,
+      "eta": "30 mins",
+      "status": "In Transit",
+      "deliveredAt": null
+    },
+    {
+      "id": "TRK002",
+      "pickup": "Warehouse B",
+      "destination": "Hospital B",
+      "driver": "Sarah Johnson",
+      "contact": "+1-555-1002",
+      "cargoType": "Medical Kits",
+      "quantity": 25,
+      "eta": "45 mins",
+      "status": "In Transit",
+      "deliveredAt": null
+    },
+    {
+      "id": "TRK003",
+      "pickup": "Warehouse C",
+      "destination": "Community Center",
+      "driver": "Mike Wilson",
+      "contact": "+1-555-1003",
+      "cargoType": "Clothing",
+      "quantity": 100,
+      "eta": "1 hour",
+      "status": "In Transit",
+      "deliveredAt": null
+    },
+    {
+      "id": "TRK004",
+      "pickup": "Warehouse A",
+      "destination": "Shelter C",
+      "driver": "Emily Davis",
+      "contact": "+1-555-1004",
+      "cargoType": "Food & Water",
+      "quantity": 75,
+      "eta": "Delivered",
+      "status": "Delivered",
+      "deliveredAt": "10:30 AM"
+    },
+    {
+      "id": "TRK005",
+      "pickup": "Warehouse B",
+      "destination": "Hospital A",
+      "driver": "Robert Brown",
+      "contact": "+1-555-1005",
+      "cargoType": "Medicine",
+      "quantity": 40,
+      "eta": "Delivered",
+      "status": "Delivered",
+      "deliveredAt": "11:15 AM"
+    },
+    {
+      "id": "TRK006",
+      "pickup": "Warehouse C",
+      "destination": "Shelter B",
+      "driver": "Lisa Anderson",
+      "contact": "+1-555-1006",
+      "cargoType": "Blankets",
+      "quantity": 60,
+      "eta": "Delivered",
+      "status": "Delivered",
+      "deliveredAt": "12:00 PM"
+    },
+    {
+      "id": "TRK007",
+      "pickup": "Warehouse A",
+      "destination": "Convention Center",
+      "driver": "David Martinez",
+      "contact": "+1-555-1007",
+      "cargoType": "Mixed Supplies",
+      "quantity": 200,
+      "eta": "Pending review",
+      "status": "Delayed",
+      "deliveredAt": null
+    }
+  ],
+  "activity": [
+    {
+      "id": "ACT001",
+      "timestamp": "2026-03-15T13:45:00.000Z",
+      "user": "Admin",
+      "action": "Updated supply inventory",
+      "resource": "Food Packets",
+      "status": "Success"
+    },
+    {
+      "id": "ACT002",
+      "timestamp": "2026-03-15T13:30:00.000Z",
+      "user": "Coordinator",
+      "action": "Added new shelter",
+      "resource": "Shelter F",
+      "status": "Success"
+    },
+    {
+      "id": "ACT003",
+      "timestamp": "2026-03-15T13:15:00.000Z",
+      "user": "Volunteer",
+      "action": "Completed delivery",
+      "resource": "#TRK007",
+      "status": "Success"
+    },
+    {
+      "id": "ACT004",
+      "timestamp": "2026-03-15T13:00:00.000Z",
+      "user": "System",
+      "action": "Automated backup",
+      "resource": "Database",
+      "status": "Info"
+    }
+  ],
+  "alerts": [
+    {
+      "id": "AL001",
+      "message": "Rising flood levels near East River sector",
+      "severity": "High",
+      "active": true
+    },
+    {
+      "id": "AL002",
+      "message": "Medical resupply required for Hospital B",
+      "severity": "Medium",
+      "active": true
+    },
+    {
+      "id": "AL003",
+      "message": "Road closure reported on Pine Road",
+      "severity": "Medium",
+      "active": true
+    }
+  ],
+  "mapLocations": [
+    {
+      "id": "MAP001",
+      "name": "Hospital B - Medical Center",
+      "type": "Hospital",
+      "lat": 12.84,
+      "lng": 80.05,
+      "status": "Emergency Available",
+      "distanceKm": 3.1,
+      "address": "95 Relief Avenue"
+    },
+    {
+      "id": "MAP002",
+      "name": "Supply Center C - Warehouse District",
+      "type": "Supply",
+      "lat": 12.81,
+      "lng": 80.03,
+      "status": "Food & Water",
+      "distanceKm": 1.8,
+      "address": "27 Logistics Park"
+    }
+  ]
+}

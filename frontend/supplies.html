@@ -1,177 +1,117 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Supplies - Crisis Supply Navigator</title>
-  <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <nav class="navbar navbar-expand-lg site-nav sticky-top">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="index.html">🚨 Crisis Supply Navigator</a>
+      <a class="navbar-brand fw-semibold" href="index.html">Crisis Supply Navigator</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="dashboard.html">📊 Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link active" href="supplies.html">📦 Supplies</a></li>
-          <li class="nav-item"><a class="nav-link" href="shelters.html">🏠 Shelters</a></li>
-          <li class="nav-item"><a class="nav-link" href="deliveries.html">🚚 Deliveries</a></li>
-          <li class="nav-item"><a class="nav-link" href="map.html">🗺️ Map</a></li>
-          <li class="nav-item"><a class="nav-link" href="admin.html">⚙️ Admin</a></li>
+          <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link active" href="supplies.html">Supplies</a></li>
+          <li class="nav-item"><a class="nav-link" href="shelters.html">Shelters</a></li>
+          <li class="nav-item"><a class="nav-link" href="deliveries.html">Deliveries</a></li>
+          <li class="nav-item"><a class="nav-link" href="map.html">Map</a></li>
+          <li class="nav-item"><a class="nav-link" href="admin.html">Admin</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Supplies Content -->
-  <div class="container mt-5">
-    <h2 class="fw-bold mb-4">📦 Supply Management</h2>
-    
-    <!-- Add Supply Button -->
-    <div class="mb-4">
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplyModal">
-        ➕ Add New Supply
-      </button>
-    </div>
+  <main class="page-shell">
+    <div class="container py-5">
+      <div class="page-header page-header-inline">
+        <div>
+          <p class="eyebrow">Inventory</p>
+          <h1 class="page-title">Supply management</h1>
+        </div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplyModal">Add supply</button>
+      </div>
+      <div id="suppliesMessage" class="mb-3"></div>
 
-    <!-- Supply Stats -->
-    <div class="row g-4 mb-4">
-      <div class="col-md-4">
-        <div class="card shadow-sm border-primary">
-          <div class="card-body text-center">
-            <h5 class="card-title">Food & Water</h5>
-            <h3 class="text-primary">300</h3>
-            <p class="text-muted">Units</p>
-          </div>
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <article class="card metric-card h-100">
+            <div class="card-body">
+              <p class="metric-label">Food and water</p>
+              <h2 class="metric-value" id="foodWaterUnits">0</h2>
+              <p class="metric-note">Units</p>
+            </div>
+          </article>
+        </div>
+        <div class="col-md-4">
+          <article class="card metric-card h-100 accent-card">
+            <div class="card-body">
+              <p class="metric-label">Clothing</p>
+              <h2 class="metric-value" id="clothingUnits">0</h2>
+              <p class="metric-note">Units</p>
+            </div>
+          </article>
+        </div>
+        <div class="col-md-4">
+          <article class="card metric-card h-100 dark-card">
+            <div class="card-body">
+              <p class="metric-label">Medicine</p>
+              <h2 class="metric-value" id="medicineUnits">0</h2>
+              <p class="metric-note">Units</p>
+            </div>
+          </article>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm border-success">
-          <div class="card-body text-center">
-            <h5 class="card-title">Clothing</h5>
-            <h3 class="text-success">150</h3>
-            <p class="text-muted">Units</p>
+
+      <article class="card panel-card">
+        <div class="card-body">
+          <div class="panel-header">
+            <p class="eyebrow">Current inventory</p>
+            <h2 class="section-card-title">Live stock table</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Type</th>
+                  <th>Category</th>
+                  <th>Quantity</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Mode</th>
+                </tr>
+              </thead>
+              <tbody id="suppliesTableBody"></tbody>
+            </table>
           </div>
         </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm border-danger">
-          <div class="card-body text-center">
-            <h5 class="card-title">Medicine</h5>
-            <h3 class="text-danger">100</h3>
-            <p class="text-muted">Units</p>
-          </div>
-        </div>
-      </div>
+      </article>
     </div>
+  </main>
 
-    <!-- Supplies Table -->
-    <div class="card shadow-sm">
-      <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">Current Inventory</h5>
-      </div>
-      <div class="card-body">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Type</th>
-              <th>Category</th>
-              <th>Quantity</th>
-              <th>Location</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>#S001</td>
-              <td>Food Packets</td>
-              <td>Food</td>
-              <td>200</td>
-              <td>Warehouse A</td>
-              <td><span class="badge bg-success">Available</span></td>
-              <td>
-                <button class="btn btn-sm btn-warning">Edit</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-              </td>
-            </tr>
-            <tr>
-              <td>#S002</td>
-              <td>Bottled Water</td>
-              <td>Water</td>
-              <td>500</td>
-              <td>Warehouse B</td>
-              <td><span class="badge bg-success">Available</span></td>
-              <td>
-                <button class="btn btn-sm btn-warning">Edit</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-              </td>
-            </tr>
-            <tr>
-              <td>#S003</td>
-              <td>Blankets</td>
-              <td>Clothing</td>
-              <td>150</td>
-              <td>Shelter A</td>
-              <td><span class="badge bg-warning">Low Stock</span></td>
-              <td>
-                <button class="btn btn-sm btn-warning">Edit</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-              </td>
-            </tr>
-            <tr>
-              <td>#S004</td>
-              <td>First Aid Kits</td>
-              <td>Medicine</td>
-              <td>100</td>
-              <td>Hospital B</td>
-              <td><span class="badge bg-success">Available</span></td>
-              <td>
-                <button class="btn btn-sm btn-warning">Edit</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-              </td>
-            </tr>
-            <tr>
-              <td>#S005</td>
-              <td>Canned Goods</td>
-              <td>Food</td>
-              <td>100</td>
-              <td>Warehouse A</td>
-              <td><span class="badge bg-info">In Transit</span></td>
-              <td>
-                <button class="btn btn-sm btn-warning">Edit</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add Supply Modal -->
   <div class="modal fade" id="addSupplyModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title">Add New Supply</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-header">
+          <h2 class="modal-title fs-5">Add supply</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form>
+          <form id="addSupplyForm">
+            <div id="supplyFormMessage" class="mb-3"></div>
             <div class="mb-3">
-              <label class="form-label">Supply Type</label>
-              <input type="text" class="form-control" placeholder="e.g., Food Packets">
+              <label class="form-label">Supply type</label>
+              <input type="text" class="form-control" name="type" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Category</label>
-              <select class="form-select">
+              <select class="form-select" name="category">
                 <option>Food</option>
                 <option>Water</option>
                 <option>Clothing</option>
@@ -181,17 +121,25 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Quantity</label>
-              <input type="number" class="form-control" placeholder="Enter quantity">
+              <input type="number" class="form-control" name="quantity" min="1" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Storage Location</label>
-              <input type="text" class="form-control" placeholder="e.g., Warehouse A">
+              <label class="form-label">Storage location</label>
+              <input type="text" class="form-control" name="location" required>
+            </div>
+            <div class="mb-0">
+              <label class="form-label">Status</label>
+              <select class="form-select" name="status">
+                <option>Available</option>
+                <option>Low Stock</option>
+                <option>In Transit</option>
+              </select>
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Add Supply</button>
+          <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+          <button type="submit" form="addSupplyForm" class="btn btn-primary">Save</button>
         </div>
       </div>
     </div>

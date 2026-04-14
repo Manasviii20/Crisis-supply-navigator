@@ -1,254 +1,97 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deliveries - Crisis Supply Navigator</title>
-  <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <nav class="navbar navbar-expand-lg site-nav sticky-top">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="index.html">🚨 Crisis Supply Navigator</a>
+      <a class="navbar-brand fw-semibold" href="index.html">Crisis Supply Navigator</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="dashboard.html">📊 Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="supplies.html">📦 Supplies</a></li>
-          <li class="nav-item"><a class="nav-link" href="shelters.html">🏠 Shelters</a></li>
-          <li class="nav-item"><a class="nav-link active" href="deliveries.html">🚚 Deliveries</a></li>
-          <li class="nav-item"><a class="nav-link" href="map.html">🗺️ Map</a></li>
-          <li class="nav-item"><a class="nav-link" href="admin.html">⚙️ Admin</a></li>
+          <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="supplies.html">Supplies</a></li>
+          <li class="nav-item"><a class="nav-link" href="shelters.html">Shelters</a></li>
+          <li class="nav-item"><a class="nav-link active" href="deliveries.html">Deliveries</a></li>
+          <li class="nav-item"><a class="nav-link" href="map.html">Map</a></li>
+          <li class="nav-item"><a class="nav-link" href="admin.html">Admin</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Deliveries Content -->
-  <div class="container mt-5">
-    <h2 class="fw-bold mb-4">🚚 Delivery Tracking</h2>
-    
-    <!-- Schedule Delivery Button -->
-    <div class="mb-4">
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scheduleDeliveryModal">
-        ➕ Schedule New Delivery
-      </button>
-    </div>
+  <main class="page-shell">
+    <div class="container py-5">
+      <div class="page-header page-header-inline">
+        <div>
+          <p class="eyebrow">Field movement</p>
+          <h1 class="page-title">Delivery tracking</h1>
+        </div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scheduleDeliveryModal">Schedule delivery</button>
+      </div>
+      <div id="deliveriesMessage" class="mb-3"></div>
 
-    <!-- Delivery Stats -->
-    <div class="row g-4 mb-4">
-      <div class="col-md-3">
-        <div class="card shadow-sm border-primary">
-          <div class="card-body text-center">
-            <h5 class="card-title">Today's Deliveries</h5>
-            <h3 class="text-primary">28</h3>
-            <p class="text-muted">Total Scheduled</p>
-          </div>
-        </div>
+      <div class="row g-4 mb-4">
+        <div class="col-md-3"><article class="card metric-card h-100"><div class="card-body"><p class="metric-label">Scheduled today</p><h2 class="metric-value" id="deliveriesScheduledCount">0</h2><p class="metric-note">Total runs</p></div></article></div>
+        <div class="col-md-3"><article class="card metric-card h-100"><div class="card-body"><p class="metric-label">Completed</p><h2 class="metric-value" id="deliveriesCompletedCount">0</h2><p class="metric-note">Successfully delivered</p></div></article></div>
+        <div class="col-md-3"><article class="card metric-card h-100 accent-card"><div class="card-body"><p class="metric-label">In transit</p><h2 class="metric-value" id="deliveriesTransitCount">0</h2><p class="metric-note">Currently active</p></div></article></div>
+        <div class="col-md-3"><article class="card metric-card h-100 dark-card"><div class="card-body"><p class="metric-label">Delayed</p><h2 class="metric-value" id="deliveriesDelayedCount">0</h2><p class="metric-note">Needs attention</p></div></article></div>
       </div>
-      <div class="col-md-3">
-        <div class="card shadow-sm border-success">
-          <div class="card-body text-center">
-            <h5 class="card-title">Completed</h5>
-            <h3 class="text-success">24</h3>
-            <p class="text-muted">Successfully Delivered</p>
-          </div>
+
+      <div class="row g-4">
+        <div class="col-12">
+          <article class="card panel-card mb-4">
+            <div class="card-body">
+              <div class="panel-header"><p class="eyebrow">Active runs</p><h2 class="section-card-title">In transit</h2></div>
+              <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Tracking ID</th><th>Driver</th><th>Destination</th><th>Cargo</th><th>ETA</th><th>Status</th><th>Tracking</th></tr></thead><tbody id="activeDeliveriesBody"></tbody></table></div>
+            </div>
+          </article>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card shadow-sm border-warning">
-          <div class="card-body text-center">
-            <h5 class="card-title">In Transit</h5>
-            <h3 class="text-warning">3</h3>
-            <p class="text-muted">Currently Active</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card shadow-sm border-danger">
-          <div class="card-body text-center">
-            <h5 class="card-title">Delayed</h5>
-            <h3 class="text-danger">1</h3>
-            <p class="text-muted">Requires Attention</p>
-          </div>
+        <div class="col-12">
+          <article class="card panel-card">
+            <div class="card-body">
+              <div class="panel-header"><p class="eyebrow">Completed runs</p><h2 class="section-card-title">Delivered and delayed</h2></div>
+              <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Tracking ID</th><th>Driver</th><th>Destination</th><th>Cargo</th><th>Updated</th><th>Status</th></tr></thead><tbody id="completedDeliveriesBody"></tbody></table></div>
+            </div>
+          </article>
         </div>
       </div>
     </div>
+  </main>
 
-    <!-- Active Deliveries -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-warning text-dark">
-        <h5 class="mb-0">🚛 In Transit</h5>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Tracking ID</th>
-                <th>Driver</th>
-                <th>Destination</th>
-                <th>Cargo</th>
-                <th>ETA</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>#TRK001</td>
-                <td>John Smith</td>
-                <td>Shelter A</td>
-                <td>Food Supplies (50 units)</td>
-                <td>30 mins</td>
-                <td><span class="badge bg-warning">In Transit</span></td>
-                <td>
-                  <button class="btn btn-sm btn-info text-white">Track</button>
-                </td>
-              </tr>
-              <tr>
-                <td>#TRK002</td>
-                <td>Sarah Johnson</td>
-                <td>Hospital B</td>
-                <td>Medical Kits (25 units)</td>
-                <td>45 mins</td>
-                <td><span class="badge bg-warning">In Transit</span></td>
-                <td>
-                  <button class="btn btn-sm btn-info text-white">Track</button>
-                </td>
-              </tr>
-              <tr>
-                <td>#TRK003</td>
-                <td>Mike Wilson</td>
-                <td>Community Center</td>
-                <td>Clothing (100 units)</td>
-                <td>1 hour</td>
-                <td><span class="badge bg-warning">In Transit</span></td>
-                <td>
-                  <button class="btn btn-sm btn-info text-white">Track</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Completed Deliveries -->
-    <div class="card shadow-sm">
-      <div class="card-header bg-success text-white">
-        <h5 class="mb-0">✅ Completed Deliveries</h5>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Tracking ID</th>
-                <th>Driver</th>
-                <th>Destination</th>
-                <th>Cargo</th>
-                <th>Delivered At</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>#TRK004</td>
-                <td>Emily Davis</td>
-                <td>Shelter C</td>
-                <td>Food & Water (75 units)</td>
-                <td>10:30 AM</td>
-                <td><span class="badge bg-success">Delivered</span></td>
-              </tr>
-              <tr>
-                <td>#TRK005</td>
-                <td>Robert Brown</td>
-                <td>Hospital A</td>
-                <td>Medicine (40 units)</td>
-                <td>11:15 AM</td>
-                <td><span class="badge bg-success">Delivered</span></td>
-              </tr>
-              <tr>
-                <td>#TRK006</td>
-                <td>Lisa Anderson</td>
-                <td>Shelter B</td>
-                <td>Blankets (60 units)</td>
-                <td>12:00 PM</td>
-                <td><span class="badge bg-success">Delivered</span></td>
-              </tr>
-              <tr>
-                <td>#TRK007</td>
-                <td>David Martinez</td>
-                <td>Convention Center</td>
-                <td>Mixed Supplies (200 units)</td>
-                <td>01:30 PM</td>
-                <td><span class="badge bg-success">Delivered</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Schedule Delivery Modal -->
   <div class="modal fade" id="scheduleDeliveryModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title">Schedule New Delivery</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-header">
+          <h2 class="modal-title fs-5">Schedule delivery</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form>
+          <form id="scheduleDeliveryForm">
+            <div id="deliveryFormMessage" class="mb-3"></div>
             <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Pickup Location</label>
-                <input type="text" class="form-control" placeholder="Enter pickup address">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Drop-off Location</label>
-                <input type="text" class="form-control" placeholder="Enter destination">
-              </div>
+              <div class="col-md-6 mb-3"><label class="form-label">Pickup location</label><input type="text" class="form-control" name="pickup" required></div>
+              <div class="col-md-6 mb-3"><label class="form-label">Drop-off location</label><input type="text" class="form-control" name="destination" required></div>
             </div>
             <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Driver Name</label>
-                <input type="text" class="form-control" placeholder="Driver's name">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Contact Number</label>
-                <input type="tel" class="form-control" placeholder="Phone number">
-              </div>
+              <div class="col-md-6 mb-3"><label class="form-label">Driver name</label><input type="text" class="form-control" name="driver" required></div>
+              <div class="col-md-6 mb-3"><label class="form-label">Contact number</label><input type="tel" class="form-control" name="contact"></div>
             </div>
-            <div class="mb-3">
-              <label class="form-label">Cargo Type</label>
-              <select class="form-select">
-                <option>Food Supplies</option>
-                <option>Water</option>
-                <option>Clothing</option>
-                <option>Medicine</option>
-                <option>Mixed Supplies</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Quantity (units)</label>
-              <input type="number" class="form-control" placeholder="Enter quantity">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Expected Pickup Time</label>
-              <input type="datetime-local" class="form-control">
-            </div>
+            <div class="mb-3"><label class="form-label">Cargo type</label><select class="form-select" name="cargoType"><option>Food Supplies</option><option>Water</option><option>Clothing</option><option>Medicine</option><option>Mixed Supplies</option></select></div>
+            <div class="mb-3"><label class="form-label">Quantity</label><input type="number" class="form-control" name="quantity" min="1" required></div>
+            <div class="mb-0"><label class="form-label">Expected pickup time</label><input type="datetime-local" class="form-control" name="eta"></div>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary">Schedule Delivery</button>
+          <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+          <button type="submit" form="scheduleDeliveryForm" class="btn btn-primary">Save</button>
         </div>
       </div>
     </div>

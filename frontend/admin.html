@@ -1,287 +1,133 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Crisis Supply Navigator</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>Admin - Crisis Supply Navigator</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <nav class="navbar navbar-expand-lg site-nav sticky-top">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="index.html">🚨 Crisis Supply Navigator</a>
+      <a class="navbar-brand fw-semibold" href="index.html">Crisis Supply Navigator</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="dashboard.html">📊 Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="supplies.html">📦 Supplies</a></li>
-          <li class="nav-item"><a class="nav-link" href="shelters.html">🏠 Shelters</a></li>
-          <li class="nav-item"><a class="nav-link" href="deliveries.html">🚚 Deliveries</a></li>
-          <li class="nav-item"><a class="nav-link" href="map.html">🗺️ Map</a></li>
-          <li class="nav-item"><a class="nav-link active" href="admin.html">⚙️ Admin</a></li>
+          <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="supplies.html">Supplies</a></li>
+          <li class="nav-item"><a class="nav-link" href="shelters.html">Shelters</a></li>
+          <li class="nav-item"><a class="nav-link" href="deliveries.html">Deliveries</a></li>
+          <li class="nav-item"><a class="nav-link" href="map.html">Map</a></li>
+          <li class="nav-item"><a class="nav-link active" href="admin.html">Admin</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Admin Content -->
-  <div class="container mt-5">
-    <h2 class="fw-bold mb-4">⚙️ Admin Control Panel</h2>
-    
-    <!-- Quick Actions -->
-    <div class="row g-4 mb-5">
-      <div class="col-md-4">
-        <div class="card shadow-sm border-primary h-100">
-          <div class="card-body text-center p-4">
-            <div class="display-4 mb-3">👤</div>
-            <h5 class="card-title fw-bold">Manage Users</h5>
-            <p class="card-text">Add, edit or remove system users and assign roles.</p>
-            <button class="btn btn-primary w-100">Manage Users</button>
-          </div>
+  <main class="page-shell">
+    <div class="container py-5">
+      <div class="page-header">
+        <div>
+          <p class="eyebrow">Control panel</p>
+          <h1 class="page-title">Admin operations</h1>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm border-success h-100">
-          <div class="card-body text-center p-4">
-            <div class="display-4 mb-3">🏠</div>
-            <h5 class="card-title fw-bold">Add Shelter</h5>
-            <p class="card-text">Register new emergency shelters and set capacity.</p>
-            <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#addShelterModal">Add Shelter</button>
-          </div>
+      <div id="adminMessage" class="mb-3"></div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <article class="card panel-card h-100">
+            <div class="card-body">
+              <p class="eyebrow">Inventory updates</p>
+              <h2 class="section-card-title">Adjust supply quantities</h2>
+              <form id="inventoryUpdateForm">
+                <div class="mb-3"><label class="form-label">Supply item</label><select class="form-select" id="inventorySupplySelect" name="supplyId"></select></div>
+                <div class="mb-3"><label class="form-label">Updated quantity</label><input type="number" class="form-control" name="quantity" min="0" required></div>
+                <div class="mb-3"><label class="form-label">Storage location</label><select class="form-select" id="inventoryLocationSelect" name="location"></select></div>
+                <button type="submit" class="btn btn-primary w-100">Update inventory</button>
+              </form>
+            </div>
+          </article>
+        </div>
+        <div class="col-md-6">
+          <article class="card panel-card h-100">
+            <div class="card-body">
+              <p class="eyebrow">System summary</p>
+              <h2 class="section-card-title">Current health</h2>
+              <div class="summary-row"><span>Total users</span><strong id="adminTotalUsers">0</strong></div>
+              <div class="progress stat-progress mb-3"><div class="progress-bar" style="width:100%"></div></div>
+              <div class="summary-row"><span>Active shelters</span><strong id="adminShelterSummary">0 / 0</strong></div>
+              <div class="progress stat-progress mb-3"><div class="progress-bar" id="adminShelterProgressBar" style="width:0%"></div></div>
+              <div class="summary-row"><span>Supply volume</span><strong id="adminSupplyCapacity">0 units</strong></div>
+              <div class="progress stat-progress mb-3"><div class="progress-bar" id="adminSupplyProgressBar" style="width:0%"></div></div>
+              <div class="summary-row"><span>System health</span><strong id="adminSystemHealth">Unknown</strong></div>
+              <div class="progress stat-progress"><div class="progress-bar" id="adminHealthProgressBar" style="width:0%"></div></div>
+            </div>
+          </article>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm border-danger h-100">
-          <div class="card-body text-center p-4">
-            <div class="display-4 mb-3">⚠️</div>
-            <h5 class="card-title fw-bold">Emergency Alerts</h5>
-            <p class="card-text">Mark areas as unsafe and broadcast emergency alerts.</p>
-            <button class="btn btn-danger w-100">Issue Alert</button>
-          </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-12">
+          <article class="card panel-card">
+            <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
+              <div>
+                <p class="eyebrow mb-1">Shelter onboarding</p>
+                <h2 class="section-card-title mb-0">Register a new shelter</h2>
+              </div>
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addShelterModal">Add shelter</button>
+            </div>
+          </article>
         </div>
       </div>
+
+      <article class="card panel-card">
+        <div class="card-body">
+          <div class="panel-header"><p class="eyebrow">Activity log</p><h2 class="section-card-title">Recent admin actions</h2></div>
+          <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Resource</th><th>Status</th></tr></thead><tbody id="adminLogsBody"></tbody></table></div>
+        </div>
+      </article>
     </div>
+  </main>
 
-    <!-- System Settings -->
-    <div class="row g-4 mb-5">
-      <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header bg-dark text-white">
-            <h5 class="mb-0">📦 Update Supplies</h5>
-          </div>
-          <div class="card-body">
-            <form>
-              <div class="mb-3">
-                <label class="form-label">Select Supply Item</label>
-                <select class="form-select">
-                  <option>Food Packets</option>
-                  <option>Bottled Water</option>
-                  <option>Blankets</option>
-                  <option>First Aid Kits</option>
-                  <option>Canned Goods</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Update Quantity</label>
-                <input type="number" class="form-control" placeholder="Enter new quantity">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Storage Location</label>
-                <select class="form-select">
-                  <option>Warehouse A</option>
-                  <option>Warehouse B</option>
-                  <option>Shelter A</option>
-                  <option>Hospital B</option>
-                </select>
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Update Inventory</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header bg-info text-white">
-            <h5 class="mb-0">📊 System Statistics</h5>
-          </div>
-          <div class="card-body">
-            <div class="mb-3">
-              <div class="d-flex justify-content-between">
-                <span>Total Users</span>
-                <strong>245</strong>
-              </div>
-              <div class="progress mt-1">
-                <div class="progress-bar" style="width: 100%"></div>
-              </div>
-            </div>
-            <div class="mb-3">
-              <div class="d-flex justify-content-between">
-                <span>Active Shelters</span>
-                <strong>12 / 15</strong>
-              </div>
-              <div class="progress mt-1">
-                <div class="progress-bar bg-success" style="width: 80%"></div>
-              </div>
-            </div>
-            <div class="mb-3">
-              <div class="d-flex justify-content-between">
-                <span>Supply Capacity</span>
-                <strong>78%</strong>
-              </div>
-              <div class="progress mt-1">
-                <div class="progress-bar bg-warning" style="width: 78%"></div>
-              </div>
-            </div>
-            <div class="mb-3">
-              <div class="d-flex justify-content-between">
-                <span>System Health</span>
-                <strong>Excellent</strong>
-              </div>
-              <div class="progress mt-1">
-                <div class="progress-bar bg-success" style="width: 95%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Logs -->
-    <div class="row">
-      <div class="col-12">
-        <div class="card shadow-sm">
-          <div class="card-header bg-secondary text-white">
-            <h5 class="mb-0">📝 Recent Activity Logs</h5>
-          </div>
-          <div class="card-body">
-            <table class="table table-sm">
-              <thead>
-                <tr>
-                  <th>Timestamp</th>
-                  <th>User</th>
-                  <th>Action</th>
-                  <th>Resource</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>2026-03-15 13:45</td>
-                  <td>Admin</td>
-                  <td>Updated supply inventory</td>
-                  <td>Food Packets</td>
-                  <td><span class="badge bg-success">Success</span></td>
-                </tr>
-                <tr>
-                  <td>2026-03-15 13:30</td>
-                  <td>Coordinator</td>
-                  <td>Added new shelter</td>
-                  <td>Shelter F</td>
-                  <td><span class="badge bg-success">Success</span></td>
-                </tr>
-                <tr>
-                  <td>2026-03-15 13:15</td>
-                  <td>Volunteer</td>
-                  <td>Completed delivery</td>
-                  <td>#TRK007</td>
-                  <td><span class="badge bg-success">Success</span></td>
-                </tr>
-                <tr>
-                  <td>2026-03-15 13:00</td>
-                  <td>System</td>
-                  <td>Automated backup</td>
-                  <td>Database</td>
-                  <td><span class="badge bg-info">Info</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add Shelter Modal -->
   <div class="modal fade" id="addShelterModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title">Add New Shelter</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-header">
+          <h2 class="modal-title fs-5">Add shelter</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form>
+          <form id="addShelterForm">
+            <div id="shelterFormMessage" class="mb-3"></div>
             <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Shelter Name</label>
-                <input type="text" class="form-control" placeholder="e.g., Shelter G">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Location Type</label>
-                <select class="form-select">
-                  <option>Community Center</option>
-                  <option>School</option>
-                  <option>Church</option>
-                  <option>Sports Complex</option>
-                  <option>Convention Center</option>
-                  <option>Other</option>
-                </select>
-              </div>
+              <div class="col-md-6 mb-3"><label class="form-label">Shelter name</label><input type="text" class="form-control" name="name" required></div>
+              <div class="col-md-6 mb-3"><label class="form-label">Location type</label><select class="form-select" name="locationType"><option>Community Center</option><option>School</option><option>Church</option><option>Sports Complex</option><option>Convention Center</option><option>Other</option></select></div>
+            </div>
+            <div class="mb-3"><label class="form-label">Address</label><input type="text" class="form-control" name="address" required></div>
+            <div class="row">
+              <div class="col-md-6 mb-3"><label class="form-label">Capacity</label><input type="number" class="form-control" name="capacity" min="1" required></div>
+              <div class="col-md-6 mb-3"><label class="form-label">Contact number</label><input type="tel" class="form-control" name="contact"></div>
             </div>
             <div class="mb-3">
-              <label class="form-label">Full Address</label>
-              <input type="text" class="form-control" placeholder="Street address, city, state, zip">
+              <label class="form-label">Facilities</label>
+              <div class="form-check"><input class="form-check-input" type="checkbox" name="facilities" value="Food Service" checked><label class="form-check-label">Food Service</label></div>
+              <div class="form-check"><input class="form-check-input" type="checkbox" name="facilities" value="Medical Support" checked><label class="form-check-label">Medical Support</label></div>
+              <div class="form-check"><input class="form-check-input" type="checkbox" name="facilities" value="Pet Friendly"><label class="form-check-label">Pet Friendly</label></div>
+              <div class="form-check"><input class="form-check-input" type="checkbox" name="facilities" value="Wheelchair Accessible" checked><label class="form-check-label">Wheelchair Accessible</label></div>
             </div>
             <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Total Capacity (people)</label>
-                <input type="number" class="form-control" placeholder="e.g., 150">
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Contact Number</label>
-                <input type="tel" class="form-control" placeholder="Phone number">
-              </div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Available Facilities</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" checked>
-                <label class="form-check-label">Food Service</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" checked>
-                <label class="form-check-label">Medical Support</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox">
-                <label class="form-check-label">Pet Friendly</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" checked>
-                <label class="form-check-label">Wheelchair Accessible</label>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Coordinates (Optional)</label>
-              <div class="row">
-                <div class="col-6">
-                  <input type="text" class="form-control" placeholder="Latitude">
-                </div>
-                <div class="col-6">
-                  <input type="text" class="form-control" placeholder="Longitude">
-                </div>
-              </div>
+              <div class="col-md-6 mb-0"><label class="form-label">Latitude</label><input type="text" class="form-control" name="lat"></div>
+              <div class="col-md-6 mb-0"><label class="form-label">Longitude</label><input type="text" class="form-control" name="lng"></div>
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-success">Add Shelter</button>
+          <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+          <button type="submit" form="addShelterForm" class="btn btn-primary">Save</button>
         </div>
       </div>
     </div>
