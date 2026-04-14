@@ -391,6 +391,12 @@ const server = http.createServer(async (request, response) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Crisis Supply Navigator running at http://localhost:${PORT}`);
-});
+// Start server when running directly (not in serverless)
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`Crisis Supply Navigator running at http://localhost:${PORT}`);
+  });
+}
+
+// Export for Vercel serverless
+module.exports = server;
